@@ -25,3 +25,30 @@ class State(rx.State):
             #Clearing the 'sticky note' so the input box becomes empty again
 
             self.new_category_name = ""
+
+
+#Defining the body of the app (UI)
+
+def index()-> rx.Component:
+    return rx.container(
+        rx.vstack(
+            rx.heading("Student Command Center", size = "9"),
+
+            rx.hstack(
+                rx.input(
+                    placeholder="Add a new life aspect",
+                    on_changes= State.set_new_category_name,
+                    value= State.new_category_name,
+                ),
+                rx.button("Add", on_click = State.add_category),
+
+            )
+            align= "center",
+            spacing= "5" ,
+        )
+
+    )
+
+app = rx.App()
+app.add_page(index)
+
