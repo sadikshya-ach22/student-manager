@@ -16,6 +16,9 @@ class State(rx.State):
     #2. The input: This stores what you are currently typing.
     new_category_name: str = ""
 
+    def set_new_category_name(self, name: str):
+        self.new_category_name = name
+
     def add_category(self):
         if self.new_category_name != "":
             #Adding a new Category object to our list
@@ -38,6 +41,13 @@ def index()-> rx.Component:
                 rx.input(
                     placeholder="Add a new life aspect",
                     on_change= State.set_new_category_name,
+
+                    #If key pressed is "Enter" run State.add_category else do nothing.
+                    on_key_down= lambda key: rx.cond(
+                        key == "Enter",
+                        State.add_category,
+                        None
+                    ),
                     value= State.new_category_name,
                 ),
                 rx.button("Add", on_click = State.add_category),
