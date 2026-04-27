@@ -1,7 +1,7 @@
 import reflex as rx
 
 
-class Category(rx.Base):
+class Category(rx.Model):
     name: str
 
 
@@ -37,12 +37,17 @@ def index()-> rx.Component:
             rx.hstack(
                 rx.input(
                     placeholder="Add a new life aspect",
-                    on_changes= State.set_new_category_name,
+                    on_change= State.set_new_category_name,
                     value= State.new_category_name,
                 ),
                 rx.button("Add", on_click = State.add_category),
 
-            )
+            ),
+            rx.foreach(
+                State.categories,
+                lambda cat: rx.text(cat.name)
+            ),
+
             align= "center",
             spacing= "5" ,
         )
