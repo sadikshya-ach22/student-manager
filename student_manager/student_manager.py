@@ -1,36 +1,27 @@
-"""Welcome to Reflex! This file outlines the steps to create a basic app."""
-
 import reflex as rx
 
-from rxconfig import config
+
+class Category(rx.Base):
+    name: str
 
 
 class State(rx.State):
-    """The app state."""
+    #1. The List: this starts with two example categories.
 
+    categories: list[Category] = [
+        Category(name = "DSA Prep"),
+        Category (name = "Research"),
+    ]
 
-def index() -> rx.Component:
-    # Welcome Page (Index)
-    return rx.container(
-        rx.color_mode.button(position="top-right"),
-        rx.vstack(
-            rx.heading("Welcome to Reflex!", size="9"),
-            rx.text(
-                "Get started by editing ",
-                rx.code(f"{config.app_name}/{config.app_name}.py"),
-                size="5",
-            ),
-            rx.link(
-                rx.button("Check out our docs!"),
-                href="https://reflex.dev/docs/getting-started/introduction/",
-                is_external=True,
-            ),
-            spacing="5",
-            justify="center",
-            min_height="85vh",
-        ),
-    )
+    #2. The input: This stores what you are currently typing.
+    new_category_name: str = ""
 
+    def add_category(self):
+        if self.new_category_name != "":
+            #Adding a new Category object to our list
 
-app = rx.App()
-app.add_page(index)
+            self.categories.append(Category(name= self.new_category_name))
+
+            #Clearing the 'sticky note' so the input box becomes empty again
+
+            self.new_category_name = ""
