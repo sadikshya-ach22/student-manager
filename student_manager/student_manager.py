@@ -43,14 +43,26 @@ def index()-> rx.Component:
                 rx.button("Add", on_click = State.add_category),
 
             ),
-            rx.foreach(
-                State.categories,
-                lambda cat: rx.text(cat.name)
+            rx.grid(
+                rx.foreach(
+                    State.categories,
+                    lambda cat: rx.card(
+                        rx.vstack(
+                            rx.text(cat.name, weight= "bold", size= "5"),
+                            rx.button("Open", size= "1", variant="outline"),
+                            padding= "3",
+                        ),
+                    )
+                ),
+                columns= "3",
+                spacing= "4",
+                width= "100%"
             ),
 
             align= "center",
             spacing= "5" ,
         )
+        
 
     )
 
