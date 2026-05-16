@@ -1,25 +1,26 @@
 import reflex as rx
 
+class Resource(rx.Model):
+    title:str
+    url: str
+    note: str =""
 
 class Category(rx.Model):
     name: str
+    items: list[Resource] = []   #Category owns a list of resources
 
 
+#---Defining the Brain of the project---
 class State(rx.State):
-    #1. The List: this starts with two example categories.
+    categories: list[Category] = [] #1. The List to add categories.
+    new_category_name: str = ""  #2. The input:stores currently typed category name
+    new_resource_title: str = ""
+    new_resource_url: str = ""
 
-    categories: list[Category] = [
-        Category(name = "MCAT Prep"),
-        Category (name = "Research"),
-    ]
-
-    #2. The input: This stores what you are currently typing.
-    new_category_name: str = ""
-
-    #The pointer: this remembers which category is currently open
-    #Initialize it with empyt Category so nothing is open at start.
+    #Pointer to remember which category is currently open
     selected_category: Category = Category(name= "")
 
+    #Logic for Categories
     def set_new_category_name(self, name: str):
         self.new_category_name = name
 
@@ -39,9 +40,31 @@ class State(rx.State):
     def clear_selection(self):
         self.selected_category = Category(name= "")
 
+    #Logic for Resources
+    def add_resource(self):
+        new_res = Resource(                 #creating object using our new Resource blueprint
+            title = self.new_resource_title,
+            url= self.new_resource_url
+        )
+
+        for cat in self.categories:          #pushing the resource into the selected category
+            if cat.name == self.selected_category.name:
+                cat.items.append(new_res)
+                break
+
+        self.new_resource_title = ""          #Cleaning up the input boxes
+        self.new_resource_url = ""
+        self.selected_category = self.selected_category    #Refresh the UI
+
+    def set_new_resource_title(self, title: str):
+        self.new_resource_title = title
+
+    def set_new_resource_url(self, url: str):
+        self.new_resource_url = url
+
     
 
-#Defining the body of the app (UI)
+# ---Defining the body of the app (UI)---
 
 def index()-> rx.Component:
     return rx.container(
@@ -55,9 +78,30 @@ def index()-> rx.Component:
                 rx.vstack(
                     rx.button("<-Back to Dashboard", on_click = State.clear_selection),
                     rx.heading(State.selected_category.name, size="7"),
-                    rx.text("Links and notes for this aspect will go here"),
+                    #THE RESOURCE FORM
+                    rx.vstack(
+                        rx.input(
+                            placeholder="Resource Title (eg: Youtube Array Video)",
+                            on_change = State.set_new_resource_title,
+                            value= State.new_resource_title,
+                            width = "100%"
+                        ),
+                        rx.input(
+                            placeholder= "URL (https: //...)",
+                            on_change = State.set_new_resource_url,
+                            value = State.new_resource_url,
+                            width = "100%"
+                        ),
+                        rx.button("Save Resource", on_click= State.add_resource, width= "100%"),
+
+                        background_color= rx.color("gray", 3),
+                        padding= "4",
+                        border_radius= "lg",
+                        width = "400px",
+                    ),
                     align= "start",
                     width = "100%",
+                    spacing="4",
                 ),
 
                 #If false: Show the main input and grid
