@@ -165,7 +165,7 @@ class State(rx.State):
 def index()-> rx.Component:
     return rx.container(
         rx.vstack(
-            rx.heading("Student Command Center", size = "9"),
+            rx.heading("Memex", size = "9"),
 
             #Using rx.cond to decide what to show
             rx.cond(
